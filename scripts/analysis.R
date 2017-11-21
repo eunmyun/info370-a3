@@ -5,4 +5,4 @@ library(dplyr)
 strava.activity <- read.csv(file='../data/strava_activity.csv', stringsAsFactors = FALSE)
 
 # Exploratory Data Analysis
-head(strava.activity)
+View(head(strava.activity))
