@@ -29,7 +29,16 @@ speed <- strava.activity %>%
           select("average_speed", "calculated")
 View(speed)
 
-# 
+# Plot distributions of some variables
+par(mfrow=c(3,1))
+avg.speed <- table(as.integer(strava.activity$average_speed))
+barplot(avg.speed, main="Average Speed Distribution", xlab="Average Speed Rounded to Integer", ylab="Number of Athletes")
+avg.kj <- table(as.integer(strava.activity$kilojoules))
+barplot(avg.kj, main="Average Energe(KJ) Distribution", xlab="Average Energy(KJ)", ylab="Number of Athletes")
+avg.heartrate = table(as.integer(strava.activity$average_heartrate))
+barplot(avg.heartrate, main="Average Heart Rate Distribution", xlab="Average Heart Rate", ylab="Number of Athletes")
+
+# Group by type and calculated averages
 by.type <- strava.activity %>% 
           group_by(type) %>%
           summarise(avg_time = mean(moving_time, na.rm=TRUE),
@@ -43,6 +52,7 @@ by.type <- strava.activity %>%
                     female = sum(athlete.sex == 'F'))
 View(by.type)
 
+# Group by gender and calculated averages
 by.gender <- strava.activity %>%
               group_by(athlete.sex) %>%
               summarise(avg_time = mean(moving_time, na.rm=TRUE),
@@ -53,3 +63,16 @@ by.gender <- strava.activity %>%
                         avg_heartrate = mean(average_heartrate, na.rm=TRUE),
                         total = n())
 View(by.gender)
+
+# Data Preparation
+ride <- strava.activity %>%
+        filter(type == 'Ride') %>%
+        group_by(athlete.sex) %>%
+        summarise(avg_time = mean(moving_time, na.rm=TRUE),
+                  avg_distance = mean(distance, na.rm=TRUE),
+                  avg_elevation = mean(total_elevation_gain, na.rm=TRUE),
+                  avg_speed = mean(average_speed, na.rm=TRUE),
+                  avg_kilojoules = mean(kilojoules, na.rm=TRUE),
+                  avg_heartrate = mean(average_heartrate, na.rm=TRUE),
+                  total = n())
+View(ride)
