@@ -64,9 +64,6 @@ by.gender <- strava.activity %>%
                         total = n())
 View(by.gender)
 
-par(mfrow=c(5,1))
-
-# Data Preparation
 mftable <- function(exercise.type) {
   t <- strava.activity %>%
         filter(type == exercise.type) %>%
@@ -80,7 +77,9 @@ mftable <- function(exercise.type) {
                   total = n())
   return(t)
 }
+ride <- mftable('Ride')
 
+# Statistical Modelling: Multinomial Regression Analysis
 library("nnet")
 test <- multinom(athlete.sex ~ average_speed + average_heartrate + kilojoules + total_elevation_gain, data = strava.activity)
 summary(test)
@@ -91,6 +90,16 @@ strava.activity$gender <- relevel(strava.activity$athlete.sex, ref = "F")
 test <- multinom(gender ~ average_speed + average_heartrate + kilojoules + total_elevation_gain, data = strava.activity)
 summary(test)
 
+# Question 2:
+df2 <- strava.activity %>%
+        select('kudos_count', 'kilojoules', 'average_heartrate') %>%
+        filter(average_heartrate != 0.0) %>%
+        mutate(energy_per_hr = kilojoules / average_heartrate) %>%
+        filter(energy_per_hr != is.na(energy_per_hr)) %>%
+        filter(energy_per_hr < 100)
+View(df2)
 
-
-
+t.test(df2$energy_per_hr, df2$kudos_count, paired = FALSE)
+fit <- lm(energy_per_hr ~ kudos_count, data = df2)
+plot(energy_per_hr ~ kudos_count, data = df2)
+abline(fit)
