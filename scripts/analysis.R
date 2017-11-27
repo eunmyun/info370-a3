@@ -64,9 +64,12 @@ by.gender <- strava.activity %>%
                         total = n())
 View(by.gender)
 
+par(mfrow=c(5,1))
+
 # Data Preparation
-ride <- strava.activity %>%
-        filter(type == 'Ride') %>%
+mftable <- function(exercise.type) {
+  t <- strava.activity %>%
+        filter(type == exercise.type) %>%
         group_by(athlete.sex) %>%
         summarise(avg_time = mean(moving_time, na.rm=TRUE),
                   avg_distance = mean(distance, na.rm=TRUE),
@@ -75,6 +78,17 @@ ride <- strava.activity %>%
                   avg_kilojoules = mean(kilojoules, na.rm=TRUE),
                   avg_heartrate = mean(average_heartrate, na.rm=TRUE),
                   total = n())
-View(ride)
+  return(t)
+}
+
+library("nnet")
+gender <- strava.activity$athlete.sex
+speed <- factor(strava.activity$average_speed)
+kj <- factor(strava.activity$kilojoules)
+heartrate <- factor(strava.activity$average_heartrate)
+df <- data.frame(gender, speed, kj, heartrate)
+ml <- multinom(gender ~ speed + kj + heartrate, data = df)
+summary(ml)
+something <- predict(ml, c(3.022, 571.0784, 139.1889), "probs")
 
 
