@@ -1,4 +1,4 @@
-# install.packages("dplyr")
+#install.packages("dplyr")
 # Load necessary libraries
 library(dplyr)
 
@@ -82,13 +82,15 @@ mftable <- function(exercise.type) {
 }
 
 library("nnet")
-gender <- strava.activity$athlete.sex
-speed <- factor(strava.activity$average_speed)
-kj <- factor(strava.activity$kilojoules)
-heartrate <- factor(strava.activity$average_heartrate)
-df <- data.frame(gender, speed, kj, heartrate)
-ml <- multinom(gender ~ speed + kj + heartrate, data = df)
-summary(ml)
-something <- predict(ml, c(3.022, 571.0784, 139.1889), "probs")
+test <- multinom(athlete.sex ~ average_speed + average_heartrate + kilojoules + total_elevation_gain, data = strava.activity)
+summary(test)
+
+strava.activity$athlete.sex <- factor(strava.activity$athlete.sex)
+strava.activity$gender <- relevel(strava.activity$athlete.sex, ref = "F")
+
+test <- multinom(gender ~ average_speed + average_heartrate + kilojoules + total_elevation_gain, data = strava.activity)
+summary(test)
+
+
 
 
