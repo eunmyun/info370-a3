@@ -76,3 +76,5 @@ ride <- strava.activity %>%
                   avg_heartrate = mean(average_heartrate, na.rm=TRUE),
                   total = n())
 View(ride)
+
+
