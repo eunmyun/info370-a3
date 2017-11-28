@@ -81,14 +81,15 @@ ride <- mftable('Ride')
 
 # Statistical Modelling: Multinomial Regression Analysis
 library("nnet")
-test <- multinom(athlete.sex ~ average_speed + average_heartrate + kilojoules + total_elevation_gain, data = strava.activity)
-summary(test)
 
 strava.activity$athlete.sex <- factor(strava.activity$athlete.sex)
-strava.activity$gender <- relevel(strava.activity$athlete.sex, ref = "F")
+strava.activity$gender1 <- relevel(strava.activity$athlete.sex, ref = "F")
+test1 <- multinom(gender1 ~ average_speed + average_heartrate + kilojoules + total_elevation_gain, data = strava.activity)
+summary(test1)
 
-test <- multinom(gender ~ average_speed + average_heartrate + kilojoules + total_elevation_gain, data = strava.activity)
-summary(test)
+strava.activity$gender = relevel(strava.activity$athlete.sex, ref = "M")
+test2 <- multinom(gender ~ average_speed + average_heartrate + kilojoules + total_elevation_gain, data = strava.activity)
+summary(test2)
 
 # Question 2:
 df2 <- strava.activity %>%
@@ -98,6 +99,8 @@ df2 <- strava.activity %>%
         filter(energy_per_hr != is.na(energy_per_hr)) %>%
         filter(energy_per_hr < 100)
 View(df2)
+
+cor(df2[,1], 'kudos_count','energy_per_hr', use = "pairwise.complete.obs")
 
 t.test(df2$energy_per_hr, df2$kudos_count, paired = FALSE)
 fit <- lm(energy_per_hr ~ kudos_count, data = df2)
